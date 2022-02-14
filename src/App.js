@@ -21,14 +21,25 @@ function App() {
 
 export default App;
 
+const maxRadius = 100;
+
 //sets canvas element size and the size of the drawing surface.
 function fitToContainer(canvas) {
 
-  canvas.style.width = '100vw' ;
-  canvas.style.height = '100vh';
-  canvas.width = window.innerWidth * 2;
-  canvas.height = window.innerHeight * 2;
+  canvas.style.width = '100%' ;
+  canvas.style.height = '100%';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
+}
+
+function mouseTracker(canvas) {
+  const mouse = {x: 0, y: 0};
+  canvas.addEventListener('mousemove', function(e) {
+    mouse.x = e.x;
+    mouse.y = e.y;
+  });
+  return mouse;
 }
 
 function Circle(canvas, ctx, position, velocities, radius, color) {
@@ -39,19 +50,22 @@ function Circle(canvas, ctx, position, velocities, radius, color) {
   this.dx = velocities.dx;
   this.dy = velocities.dy;
   this.radius = radius;
+  this.oRadius = radius;
   this.color = color;
+
+  this.mouse = mouseTracker(canvas);
+  console.log(this.mouse)
 
   this.draw = function() {
 
     this.ctx.beginPath();
     this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    this.ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 0.25)`;
+    this.ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 1)`;
     this.ctx.fill();
 
   }
 
   this.update = function() {
-
     if(this.x + this.radius > this.canvas.width || this.x - this.radius < 0 ) {
 
       this.dx = -this.dx;
@@ -67,6 +81,16 @@ function Circle(canvas, ctx, position, velocities, radius, color) {
     this.x += this.dx;
     this.y += this.dy;
 
+    if(Math.abs(this.x - this.mouse.x) < 50 && Math.abs(this.y - this.mouse.y) < 50)
+    {
+      if(this.radius < maxRadius){
+        this.radius += 2;
+
+      }
+    } else if(this.radius > this.oRadius) {
+      this.radius -= 2;
+    }
+
     this.draw()
 
   }
@@ -76,10 +100,10 @@ function createCircle(canvas, ctx) {
 
   let circleArray = [];
 
-  for(let i = 0; i < 25; i++) {
+  for(let i = 0; i < 1000; i++) {
 
     //get random radius for size of circle
-    let radius = Math.ceil(Math.random() * 1000) % 100;
+    let radius = Math.ceil(Math.random() * 1000) % 10;
 
     //get random x & y position;
     let circlePosition = getPosition(canvas, radius);
@@ -126,10 +150,10 @@ function getPosition(canvas, radius) {
 
 function getVelocity() {
 
-  let dx = (Math.random() + 4) + 1;
+  let dx = Math.random() * 100 / 10 % 2;
   dx *= Math.floor(Math.random() * 2) === 1 ? 1 : -1;
 
-  let dy = (Math.random() * 4) + 1;
+  let dy = Math.random() * 100 / 10 % 2;
   dy *= Math.floor(Math.random() * 2) === 1 ? 1 : -1;
 
   return{dx, dy};
