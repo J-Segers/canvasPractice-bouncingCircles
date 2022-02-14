@@ -24,10 +24,10 @@ export default App;
 //sets canvas element size and the size of the drawing surface.
 function fitToContainer(canvas) {
 
-  canvas.style.width = '100%' ;
-  canvas.style.height = '100%';
-  canvas.width = canvas.offsetWidth * 2;
-  canvas.height = canvas.offsetHeight * 2;
+  canvas.style.width = '100vw' ;
+  canvas.style.height = '100vh';
+  canvas.width = window.innerWidth * 2;
+  canvas.height = window.innerHeight * 2;
 
 }
 
